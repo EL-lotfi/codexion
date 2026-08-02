@@ -1,16 +1,15 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   coder.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/05 14:54:22 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/07/08 13:36:43 by ibel-lot         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
-#include "coder.h"
+#include "coders/coder.h"
+
+void *coder_routine(void *param)
+{
+  t_coder *coder = (t_coder *)param;
+  affect_dongle(coder, RIGHT);
+  affect_dongle(coder, LEFT);
+  compile_process(coder);
+  debug_process(coder);
+  refactor_process(coder);
+}
 
 t_coder *coder_init(t_table *table)
 {
@@ -25,6 +24,8 @@ t_coder *coder_init(t_table *table)
   coder->cmp_count = 0;
   coder->f_dongle = malloc(sizeof(t_dongle));
   coder->table = table;
+  printf("\n");
+  printf("hii %d",coder->table->time_to_compile);
   if (!coder->f_dongle)
   {
     // clean_up()
@@ -37,8 +38,7 @@ t_coder *coder_init(t_table *table)
     // clean_up();
     return 0;
   }
-  pthread_mutex_lock(&coder->f_dongle->mutex);
-  pthread_mutex_unlock(&coder->f_dongle->mutex);
+
   return (coder);
 }
 
@@ -68,4 +68,39 @@ t_coder *create_coders(int nbr_coders, t_table *table)
     id_coder++;
   }
   return (first_coder);
+}
+
+int main()
+{
+  t_table *table;
+  t_coder *first_coder;
+  t_coder *current_coder;
+  t_bool  first;
+
+  table = malloc(sizeof(t_table));
+  table->time_to_compile = 300;
+  table->time_to_debug = 200;
+  table->time_to_refactor = 100;
+  table->start_time = get_current_time_ms();
+  if(pthread_mutex_init(&table->print_mutex, NULL) != 0)
+  {
+    // clean_up();
+    return 0;
+  }
+  first_coder = create_coders(3, table);
+  current_coder = first_coder;
+  first = TRUE;
+  while (current_coder != first_coder || first)
+  { 
+    pthread_create(&current_coder->coder_thread, NULL, coder_routine, &current_coder);
+    current_coder = current_coder->nxt_coder;
+    first = FALSE;
+  }
+  first = TRUE;
+  while (current_coder != first_coder || first)
+  { 
+    pthread_join(current_coder->coder_thread, NULL);
+    current_coder = current_coder->nxt_coder;
+    first = FALSE;
+  }
 }

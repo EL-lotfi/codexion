@@ -21,17 +21,17 @@ t_bool affect_dongle(t_coder *coder, char side)
 {
   if (side == LEFT)
   {
-    pthread_mutex_lock(&coder->prev->f_dongle->mutex)
-    coder->l_dongle = coder->prev->f_dongle;
-    coder->l_dongle->in_use = True;
-    pthread_mutex_unlock(&coder->prev->f_dongle->mutex)
+    pthread_mutex_lock(&coder->prv_coder->f_dongle->mutex);
+    coder->l_dongle = coder->prv_coder->f_dongle;
+    coder->l_dongle->in_use = TRUE;
+    pthread_mutex_unlock(&coder->prv_coder->f_dongle->mutex);
   }
   else
   {
-    pthread_mutex_lock(&coder->f_dongle->mutex)
+    pthread_mutex_lock(&coder->f_dongle->mutex);
     coder->r_dongle = coder->f_dongle;
-    coder->r_dongle->in_use = True;
-    pthread_mutex_unlock(&coder->f_dongle->mutex)
+    coder->r_dongle->in_use = TRUE;
+    pthread_mutex_unlock(&coder->f_dongle->mutex);
   }
 }
 
@@ -39,16 +39,16 @@ t_bool detach_dongle(t_coder *coder, char side)
 {
   if (side == LEFT)
   {
-    pthread_mutex_lock(&coder->prev->f_dongle->mutex)
-    coder->l_dongle = coder->prev->f_dongle;
-    coder->l_dongle->in_use = False;
-    pthread_mutex_unlock(&coder->prev->f_dongle->mutex)
+    pthread_mutex_lock(&coder->prv_coder->f_dongle->mutex);
+    coder->l_dongle = coder->prv_coder->f_dongle;
+    coder->l_dongle->in_use = FALSE;
+    pthread_mutex_unlock(&coder->prv_coder->f_dongle->mutex);
   }
   else
   {
-    pthread_mutex_lock(&coder->prev->f_dongle->mutex)
-    coder->r_dongle = coder->prev->f_dongle;
-    coder->r_dongle->in_use = True;
-    pthread_mutex_unlock(&coder->prev->f_dongle->mutex)
+    pthread_mutex_lock(&coder->prv_coder->f_dongle->mutex);
+    coder->r_dongle = coder->prv_coder->f_dongle;
+    coder->r_dongle->in_use = TRUE;
+    pthread_mutex_unlock(&coder->prv_coder->f_dongle->mutex);
   }
 }

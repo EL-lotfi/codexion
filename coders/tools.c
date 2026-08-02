@@ -12,21 +12,9 @@
 
 #include "coder.h"
 
-long long count_elapsed_time()
+long long count_elapsed_time(t_table *table)
 {
-  return (get_current_time_ms() - table.start_time);
-}
-
-void print_process(t_process process)
-{
-  if (process == GETTING_DONGLES)
-    printf("%lld/t%d/t/has taken a dongle", count_elapsed_time(), coder->id_coder);
-  else if (process == COMPILING)
-    printf("%lld/t%d/t/is compiling", count_elapsed_time(), coder->id_coder);
-  else if (process == DEBUGGING)
-    printf("%lld/t%d/t/is debigging", count_elapsed_time(), coder->id_coder);
-  else if (process == REFACTORING)
-    printf("%lld/t%d/t/is refactoring", count_elapsed_time(), coder->id_coder);
+  return (get_current_time_ms() - table->start_time);
 }
 
 long long get_current_time_ms()
@@ -34,5 +22,19 @@ long long get_current_time_ms()
   struct timeval tv;
 
   gettimeofday(&tv, NULL);
-  return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+  return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+}
+
+void print_process(t_coder *coder, t_process process)
+{
+  pthread_mutex_lock(&coder->table->print_mutex);
+  if (process == GETTING_DONGLES)
+    printf("%lld\t%d\thas taken a dongle\n", count_elapsed_time(coder->table), coder->id_coder);
+  else if (process == COMPILING)
+    printf("%lld\t%d\tis compiling\n", count_elapsed_time(coder->table), coder->id_coder);
+  else if (process == DEBUGGING)
+    printf("%lld\t%d\tis debigging\n", count_elapsed_time(coder->table), coder->id_coder);
+  else if (process == REFACTORING)
+    printf("%lld\t%d\tis refactoring\n", count_elapsed_time(coder->table), coder->id_coder);
+  pthread_mutex_unlock(&coder->table->print_mutex);
 }

@@ -25,6 +25,8 @@ t_coder *coder_init(t_table *table)
   coder->cmp_count = 0;
   coder->f_dongle = malloc(sizeof(t_dongle));
   coder->table = table;
+  printf("\n");
+  printf("hii %d",coder->table->time_to_compile);
   if (!coder->f_dongle)
   {
     // clean_up()
@@ -37,8 +39,7 @@ t_coder *coder_init(t_table *table)
     // clean_up();
     return 0;
   }
-  pthread_mutex_lock(&coder->f_dongle->mutex);
-  pthread_mutex_unlock(&coder->f_dongle->mutex);
+
   return (coder);
 }
 

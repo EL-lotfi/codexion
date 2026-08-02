@@ -39,6 +39,17 @@ typedef struct s_dongle{
   pthread_mutex_t mutex;
 } t_dongle;
 
+
+typedef struct s_table {
+  pthread_mutex_t print_mutex;
+  long long start_time;
+  int     time_to_compile;
+  int     time_to_burnout;
+  int     time_to_debug;
+  int     time_to_refactor;
+  int     nbr_compiles_required;
+} t_table;
+
 typedef struct s_coder {
   int             id_coder;
   pthread_t       coder_thread;
@@ -49,25 +60,14 @@ typedef struct s_coder {
   t_dongle        *f_dongle;
   struct s_coder  *nxt_coder;
   struct s_coder  *prv_coder;
+  t_table         *table;
 } t_coder;
 
-typedef struct table {
-  pthread_mutex_t print_mutex;
-  long long start_time;
-  int time_to_compile;
-  int time_to_burnout;
-  int time_to_debug;
-  int time_to_refactor;
-  int nbr_compiles_required;
-}
-
-void coder_routine(t_coder *coder);
+void *coder_routine(void *param);
 long long count_elapsed_time();
-void compile_process(t_coder *coder, t_table *table, long long time);
-void debug_process(t_coder *coder, t_table *table, long long time);
-void refactor_process(t_coder *coder, t_table *table, long long time);
 long long get_current_time_ms();
-void print_process(t_process process);
-t_coder *create_coders(int nbr_coders);
+void print_process(t_coder *coder, t_process process);
+t_coder *create_coders(int nbr_coders, t_table *table);
+t_bool affect_dongle(t_coder *coder, char side);
 
 #endif // !CODER_H

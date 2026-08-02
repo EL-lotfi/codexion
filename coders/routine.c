@@ -13,45 +13,43 @@
 
 #include "coder.h"
 
-void compile_process(t_coder *coder, t_table *table, long long time)
+void compile_process(t_coder *coder)
 {
   long long compile_start;
 
-  print_process(COMPILING);
+  print_process(coder, COMPILING);
   compile_start = get_current_time_ms();
-  while (get_current_time_ms() - compile_start < table.time_to_compile)
+  while (get_current_time_ms() - compile_start < coder->table->time_to_compile)
     ;
-  coder->compile_count += 1; 
+  coder->cmp_count += 1; 
 }
 
-void debug_process(t_coder *coder, t_table *table, long long time)
+void debug_process(t_coder *coder)
 {
   long long debug_start;
 
-  print_process(DEBUGGING);
-  compile_start = get_current_time_ms();
-  while (get_current_time_ms() - compile_start < table.time_to_compile)
+  print_process(coder, DEBUGGING);
+  debug_start = get_current_time_ms();
+  while (get_current_time_ms() - debug_start < coder->table->time_to_debug)
     ;
 }
 
-void refactor_process(t_coder *coder, t_table *table, long long time)
+void refactor_process(t_coder *coder)
 {
   long long refactor_start;
 
-  print_process(REFACTORING);
+  print_process(coder, REFACTORING);
   refactor_start = get_current_time_ms();
-  while (get_current_time_ms() - refactor_start < table.time_to_compile)
+  while (get_current_time_ms() - refactor_start < coder->table->time_to_refactor)
     ;
 }
 
-void coder_routine(t_coder *coder)
+void *coder_routine(void *param)
 {
-  // affect_dongle(coder, "r");
-  // affect_dongle(coder, "l");
+  t_coder *coder = (t_coder *)param;
+  affect_dongle(coder, RIGHT);
+  affect_dongle(coder, LEFT);
   compile_process(coder);
-  pthread_mutex_lock(table.print_mutex);
-  show_the_process(coder);
-  pthread_mutex_unlock(table.print_mutex);
   debug_process(coder);
   refactor_process(coder);
 }
