@@ -47,9 +47,19 @@ void refactor_process(t_coder *coder)
 void *coder_routine(void *param)
 {
   t_coder *coder = (t_coder *)param;
-  affect_dongle(coder, RIGHT);
-  affect_dongle(coder, LEFT);
+  if (coder->id_coder % 2 ==  0)
+  {
+    affect_dongle(coder, RIGHT);
+    affect_dongle(coder, LEFT);
+  }
+  else
+  {
+    affect_dongle(coder, LEFT);
+    affect_dongle(coder, RIGHT);
+  }
   compile_process(coder);
+  detach_dongle(coder, RIGHT);
+  detach_dongle(coder, LEFT);
   debug_process(coder);
   refactor_process(coder);
 }

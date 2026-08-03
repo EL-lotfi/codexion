@@ -29,7 +29,7 @@ int main()
     // clean_up();
     return 0;
   }
-  first_coder = create_coders(5, table);
+  first_coder = create_coders(10, table);
   current_coder = first_coder;
   first = TRUE;
   while (current_coder != first_coder || first)

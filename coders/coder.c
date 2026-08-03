@@ -37,8 +37,11 @@ t_coder *coder_init(t_table *table)
     // clean_up();
     return 0;
   }
-  pthread_mutex_lock(&coder->f_dongle->mutex);
-  pthread_mutex_unlock(&coder->f_dongle->mutex);
+  if(pthread_cond_init(&coder->f_dongle->dongle_cond, NULL) != 0)
+  {
+    // clean_up();
+    return 0;
+  }
   return (coder);
 }
 

@@ -18,7 +18,7 @@
 #include <pthread.h>
 
 typedef enum s_process{
-  GETTING_DONGLES,
+  TAKING_DONGLES,
   COMPILING,
   DEBUGGING,
   REFACTORING
@@ -36,6 +36,7 @@ typedef enum e_bool{
 
 typedef struct s_dongle{
   t_bool          in_use; 
+  pthread_cond_t  dongle_cond;
   pthread_mutex_t mutex;
 } t_dongle;
 
@@ -69,5 +70,6 @@ long long get_current_time_ms();
 void print_process(t_coder *coder, t_process process);
 t_coder *create_coders(int nbr_coders, t_table *table);
 t_bool affect_dongle(t_coder *coder, char side);
+t_bool detach_dongle(t_coder *coder, char side);
 
 #endif // !CODER_H
