@@ -38,3 +38,18 @@ void print_process(t_coder *coder, t_process process)
     printf("%lld\t%d\tis refactoring\n", count_elapsed_time(coder->table), coder->id_coder);
   pthread_mutex_unlock(&coder->table->print_mutex);
 }
+
+void redefine_priority(t_coder *coder)
+{
+  if(coder->last_readiness_time < coder->nxt_coder->last_readiness_time 
+      || coder->nxt_coder->cmp_count == coder->table->nbr_compiles_required)
+  {
+    if (coder->f_dongle->queue[0] != coder->id_coder)
+      swap_queue(coder->f_dongle->queue);
+  }
+  else
+  {
+    if (coder->f_dongle->queue[0] == coder->id_coder)
+      swap_queue(coder->f_dongle->queue);
+  }
+}

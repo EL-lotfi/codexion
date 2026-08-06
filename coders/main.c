@@ -24,21 +24,23 @@ int main()
   table->time_to_debug = 200;
   table->time_to_refactor = 100;
   table->start_time = get_current_time_ms();
+  table->nbr_compiles_required = 5;
   if(pthread_mutex_init(&table->print_mutex, NULL) != 0)
   {
     // clean_up();
     return 0;
   }
-  first_coder = create_coders(10, table);
+  first_coder = create_coders(4, table);
   current_coder = first_coder;
   first = TRUE;
-  while (current_coder != first_coder || first)
+  while (current_coder != first_coder  ||  first)
   { 
     pthread_create(&current_coder->coder_thread, NULL, coder_routine, current_coder);
     current_coder = current_coder->nxt_coder;
     first = FALSE;
   }
   first = TRUE;
+  current_coder = first_coder;
   while (current_coder != first_coder || first)
   { 
     pthread_join(current_coder->coder_thread, NULL);

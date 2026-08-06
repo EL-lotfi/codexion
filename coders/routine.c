@@ -47,19 +47,24 @@ void refactor_process(t_coder *coder)
 void *coder_routine(void *param)
 {
   t_coder *coder = (t_coder *)param;
-  if (coder->id_coder % 2 ==  0)
+  while (coder->cmp_count < coder->table->nbr_compiles_required)
   {
-    affect_dongle(coder, RIGHT);
-    affect_dongle(coder, LEFT);
+    if (coder->id_coder % 2 ==  0)
+    {
+      affect_dongle(coder, RIGHT);
+      affect_dongle(coder, LEFT);
+    }
+    else
+    {
+      affect_dongle(coder, LEFT);
+      affect_dongle(coder, RIGHT);
+    }
+    coder->last_readiness_time = get_current_time_ms();
+    compile_process(coder);
+    detach_dongle(coder, RIGHT);
+    detach_dongle(coder, LEFT);
+    debug_process(coder);
+    refactor_process(coder);
   }
-  else
-  {
-    affect_dongle(coder, LEFT);
-    affect_dongle(coder, RIGHT);
-  }
-  compile_process(coder);
-  detach_dongle(coder, RIGHT);
-  detach_dongle(coder, LEFT);
-  debug_process(coder);
-  refactor_process(coder);
+  return (NULL);
 }

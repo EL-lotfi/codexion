@@ -12,6 +12,40 @@
 
 #include "coder.h"
 
+void init_queue(t_coder *coder)
+{
+    if (!coder->f_dongle->queue)
+    {
+      // clean_up();
+      return ;
+    }
+    if (coder->id_coder % 2 ==  0)
+    {
+      coder->f_dongle->queue[0] = coder->id_coder;
+      coder->f_dongle->queue[1] = coder->nxt_coder->id_coder;
+    }
+    else
+    {
+      coder->f_dongle->queue[0] = coder->nxt_coder->id_coder;
+      coder->f_dongle->queue[1] = coder->id_coder;
+    }
+}
+
+void init_queues(t_coder *first_coder)
+{
+  t_coder   *current_coder;
+  t_bool    first;
+
+  first = TRUE;
+  current_coder = first_coder;
+  while (current_coder != first_coder  ||  first)
+  {
+    init_queue(current_coder);
+    current_coder = current_coder->nxt_coder;
+    first = FALSE;
+  }
+}
+
 t_coder *coder_init(t_table *table)
 {
   t_coder *coder;
@@ -25,13 +59,14 @@ t_coder *coder_init(t_table *table)
   coder->cmp_count = 0;
   coder->f_dongle = malloc(sizeof(t_dongle));
   coder->table = table;
+  coder->f_dongle->in_use = FALSE;
+  coder->table = table;
+  coder->f_dongle->queue = malloc(2 * sizeof(int));
   if (!coder->f_dongle)
   {
     // clean_up()
     return (0);
   }
-  coder->f_dongle->in_use = FALSE;
-  coder->table = table;
   if(pthread_mutex_init(&coder->f_dongle->mutex, NULL) != 0)
   {
     // clean_up();
@@ -70,5 +105,6 @@ t_coder *create_coders(int nbr_coders, t_table *table)
     new_coder->id_coder = id_coder;
     id_coder++;
   }
+  init_queues(first_coder);
   return (first_coder);
 }
