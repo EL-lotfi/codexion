@@ -25,12 +25,14 @@ int main()
   table->time_to_refactor = 100;
   table->start_time = get_current_time_ms();
   table->nbr_compiles_required = 5;
+  table->dongle_cooldown = 100;
+  table->scheduler_type = FIFO;
   if(pthread_mutex_init(&table->print_mutex, NULL) != 0)
   {
     // clean_up();
     return 0;
   }
-  first_coder = create_coders(4, table);
+  first_coder = create_coders(3, table);
   current_coder = first_coder;
   first = TRUE;
   while (current_coder != first_coder  ||  first)

@@ -34,10 +34,16 @@ typedef enum e_bool{
   TRUE
 } t_bool;
 
+typedef enum e_scheduler {
+  FIFO,
+  EDF
+} t_scheduler;
+
 typedef struct s_dongle{
-  t_bool          in_use; 
   pthread_cond_t  dongle_cond;
   pthread_mutex_t mutex;
+  t_bool          r_request;
+  t_bool          l_request;
   int             *queue;
 } t_dongle;
 
@@ -50,6 +56,8 @@ typedef struct s_table {
   int             time_to_debug;
   int             time_to_refactor;
   int             nbr_compiles_required;
+  int             dongle_cooldown;
+  t_scheduler     scheduler_type;
 } t_table;
 
 typedef struct s_coder {
@@ -58,8 +66,6 @@ typedef struct s_coder {
   int             time_to_burnout;
   int             cmp_count;
   long long       last_readiness_time;
-  t_dongle        *l_dongle;
-  t_dongle        *r_dongle;
   t_dongle        *f_dongle;
   struct s_coder  *nxt_coder;
   struct s_coder  *prv_coder;
@@ -71,8 +77,8 @@ long long count_elapsed_time();
 long long get_current_time_ms();
 void      print_process(t_coder *coder, t_process process);
 t_coder   *create_coders(int nbr_coders, t_table *table);
-void      affect_dongle(t_coder *coder, char side);
-void      detach_dongle(t_coder *coder, char side);
+void      affect_dongle(t_coder *coder, t_side side);
+void      detach_dongle(t_coder *coder, t_side side);
 void      swap_queue(int *queue);
 void      redefine_priority(t_coder *coder);
 

@@ -25,31 +25,36 @@ long long get_current_time_ms()
   return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
-void print_process(t_coder *coder, t_process process)
+void edf_priority(t_coder *coder)
 {
-  pthread_mutex_lock(&coder->table->print_mutex);
-  if (process == TAKING_DONGLES)
-    printf("%lld\t%d\thas taken a dongle\n", count_elapsed_time(coder->table), coder->id_coder);
-  else if (process == COMPILING)
-    printf("%lld\t%d\tis compiling\n", count_elapsed_time(coder->table), coder->id_coder);
-  else if (process == DEBUGGING)
-    printf("%lld\t%d\tis debugging\n", count_elapsed_time(coder->table), coder->id_coder);
-  else if (process == REFACTORING)
-    printf("%lld\t%d\tis refactoring\n", count_elapsed_time(coder->table), coder->id_coder);
-  pthread_mutex_unlock(&coder->table->print_mutex);
+  if (coder->prv_coder->f_dongle->queue[0] != coder->id_coder &&
+      coder->last_readiness_time < coder->prv_coder->last_readiness_time
+      && (coder->prv_coder->cmp_count == coder->table->nbr_compiles_required
+      || coder->cmp_count != coder->table->nbr_compiles_required))
+    swap_queue(coder->prv_coder->f_dongle->queue);
+  else if (coder->f_dongle->queue[0] != coder->id_coder &&
+      coder->last_readiness_time < coder->nxt_coder->last_readiness_time
+      && (coder->nxt_coder->cmp_count == coder->table->nbr_compiles_required
+    || coder->cmp_count != coder->table->nbr_compiles_required))
+    swap_queue(coder->f_dongle->queue);
+}
+
+void fifo_priority(t_coder *coder)
+{
+  if (coder->f_dongle->r_request == FALSE && 
+      coder->f_dongle->l_request ==  TRUE &&
+      coder->f_dongle->queue[0] != coder->id_coder)
+    swap_queue(coder->f_dongle->queue);
+  if (coder->f_dongle->r_request == TRUE && 
+      coder->f_dongle->l_request ==  FALSE &&
+      coder->f_dongle->queue[0] == coder->id_coder)
+    swap_queue(coder->f_dongle->queue);
 }
 
 void redefine_priority(t_coder *coder)
 {
-  if(coder->last_readiness_time < coder->nxt_coder->last_readiness_time 
-      || coder->nxt_coder->cmp_count == coder->table->nbr_compiles_required)
-  {
-    if (coder->f_dongle->queue[0] != coder->id_coder)
-      swap_queue(coder->f_dongle->queue);
-  }
-  else
-  {
-    if (coder->f_dongle->queue[0] == coder->id_coder)
-      swap_queue(coder->f_dongle->queue);
-  }
+  if (coder->table->scheduler_type == EDF)
+    edf_priority(coder);
+  else if (coder->table->scheduler_type == FIFO)
+    fifo_priority(coder);
 }

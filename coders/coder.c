@@ -31,6 +31,30 @@ void init_queue(t_coder *coder)
     }
 }
 
+void init_requests(t_coder *first_coder)
+{
+  t_coder   *current_coder;
+  t_bool    first;
+
+  first = TRUE;
+  current_coder = first_coder;
+  while (current_coder != first_coder  ||  first)
+  {
+    if (current_coder->id_coder % 2 ==  0)
+    {
+      current_coder->f_dongle->l_request = TRUE;
+      current_coder->f_dongle->r_request = TRUE;
+    }
+    else
+    {
+      current_coder->f_dongle->l_request = FALSE;
+      current_coder->f_dongle->r_request = FALSE;
+    }
+    current_coder = current_coder->nxt_coder;
+    first = FALSE;
+  }
+}
+
 void init_queues(t_coder *first_coder)
 {
   t_coder   *current_coder;
@@ -44,6 +68,8 @@ void init_queues(t_coder *first_coder)
     current_coder = current_coder->nxt_coder;
     first = FALSE;
   }
+  if (first_coder->table->scheduler_type == FIFO)
+    init_requests(first_coder);
 }
 
 t_coder *coder_init(t_table *table)
@@ -59,9 +85,9 @@ t_coder *coder_init(t_table *table)
   coder->cmp_count = 0;
   coder->f_dongle = malloc(sizeof(t_dongle));
   coder->table = table;
-  coder->f_dongle->in_use = FALSE;
   coder->table = table;
   coder->f_dongle->queue = malloc(2 * sizeof(int));
+  coder->last_readiness_time = get_current_time_ms();
   if (!coder->f_dongle)
   {
     // clean_up()
@@ -108,3 +134,21 @@ t_coder *create_coders(int nbr_coders, t_table *table)
   init_queues(first_coder);
   return (first_coder);
 }
+
+
+
+
+
+// void edf_priority(t_coder *coder)
+// {
+//   if (coder->f_dongle->queue[0] == coder->id_coder &&
+//       coder->last_readiness_time < coder->nxt_coder->last_readiness_time
+//       && (coder->nxt_coder->cmp_count == coder->table->nbr_compiles_required
+//     || coder->cmp_count != coder->table->nbr_compiles_required))
+//     swap_queue(coder->f_dongle->queue);
+//   if (coder->prv_coder->f_dongle->queue[0] == coder->id_coder &&
+//       coder->last_readiness_time < coder->prv_coder->last_readiness_time
+//       && (coder->prv_coder->cmp_count == coder->table->nbr_compiles_required
+//       || coder->cmp_count != coder->table->nbr_compiles_required))
+//     swap_queue(coder->prv_coder->f_dongle->queue);
+// }
