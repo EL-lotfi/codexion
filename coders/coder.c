@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/05 14:54:22 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/10 10:13:34 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/10 14:14:44 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ void init_requests(t_coder *first_coder)
       current_coder->f_dongle->l_request = FALSE;
       current_coder->f_dongle->r_request = FALSE;
     }
+    current_coder->f_dongle->last_use_time = 0;
     current_coder = current_coder->nxt_coder;
     first = FALSE;
   }
@@ -134,21 +135,3 @@ t_coder *create_coders(int nbr_coders, t_table *table)
   init_queues(first_coder);
   return (first_coder);
 }
-
-
-
-
-
-// void edf_priority(t_coder *coder)
-// {
-//   if (coder->f_dongle->queue[0] == coder->id_coder &&
-//       coder->last_readiness_time < coder->nxt_coder->last_readiness_time
-//       && (coder->nxt_coder->cmp_count == coder->table->nbr_compiles_required
-//     || coder->cmp_count != coder->table->nbr_compiles_required))
-//     swap_queue(coder->f_dongle->queue);
-//   if (coder->prv_coder->f_dongle->queue[0] == coder->id_coder &&
-//       coder->last_readiness_time < coder->prv_coder->last_readiness_time
-//       && (coder->prv_coder->cmp_count == coder->table->nbr_compiles_required
-//       || coder->cmp_count != coder->table->nbr_compiles_required))
-//     swap_queue(coder->prv_coder->f_dongle->queue);
-// }

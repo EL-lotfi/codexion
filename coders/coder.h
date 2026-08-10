@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 16:49:43 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/07/09 18:45:18 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/10 14:17:46 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ typedef enum e_scheduler {
 typedef struct s_dongle{
   pthread_cond_t  dongle_cond;
   pthread_mutex_t mutex;
+  long long       last_use_time;
   t_bool          r_request;
   t_bool          l_request;
   int             *queue;
@@ -77,6 +78,7 @@ long long count_elapsed_time();
 long long get_current_time_ms();
 void      print_process(t_coder *coder, t_process process);
 t_coder   *create_coders(int nbr_coders, t_table *table);
+t_bool    is_dongle_available(t_coder *coder);
 void      affect_dongle(t_coder *coder, t_side side);
 void      detach_dongle(t_coder *coder, t_side side);
 void      swap_queue(int *queue);

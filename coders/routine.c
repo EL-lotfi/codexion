@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/05 14:54:35 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/07/09 18:51:30 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/10 14:16:12 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ void compile_process(t_coder *coder)
   compile_start = get_current_time_ms();
   while (get_current_time_ms() - compile_start < coder->table->time_to_compile)
     ;
+  coder->f_dongle->last_use_time = get_current_time_ms();
+  coder->prv_coder->f_dongle->last_use_time = get_current_time_ms();
   coder->cmp_count += 1; 
 }
 
