@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/05 14:54:22 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/07/08 13:36:43 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/10 10:13:34 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void init_requests(t_coder *first_coder)
 
   first = TRUE;
   current_coder = first_coder;
-  while (current_coder != first_coder  ||  first)
+  while (current_coder != first_coder->nxt_coder  ||  first)
   {
     if (current_coder->id_coder % 2 ==  0)
     {

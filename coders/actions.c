@@ -30,7 +30,7 @@ void affect_dongle(t_coder *coder, t_side side)
     if (side == LEFT)
     {
       coder_holder->f_dongle->r_request = TRUE;
-      redefine_priority(coder_holder);
+      redefine_priority(coder);
     }
     else
     {
@@ -53,8 +53,7 @@ void detach_dongle(t_coder *coder, t_side side)
   {
     pthread_mutex_lock(&coder->prv_coder->f_dongle->mutex);
     coder->prv_coder->f_dongle->r_request = FALSE;
-    if (coder->table->scheduler_type == EDF)
-      redefine_priority(coder->nxt_coder);
+    redefine_priority(coder->prv_coder);
     while (get_current_time_ms() - cooldown_tick  < coder->table->dongle_cooldown)
       ;
     pthread_cond_signal(&coder->prv_coder->f_dongle->dongle_cond);
@@ -64,8 +63,7 @@ void detach_dongle(t_coder *coder, t_side side)
   {
     pthread_mutex_lock(&coder->f_dongle->mutex);
     coder->f_dongle->l_request = FALSE;
-    if (coder->table->scheduler_type == EDF)
-      redefine_priority(coder->nxt_coder);
+    redefine_priority(coder->nxt_coder);
     while (get_current_time_ms() - cooldown_tick  < coder->table->dongle_cooldown)
       ;
     pthread_cond_signal(&coder->f_dongle->dongle_cond);

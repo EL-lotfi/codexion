@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/08 17:46:04 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/07/09 17:40:13 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/10 11:47:48 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int main()
     // clean_up();
     return 0;
   }
-  first_coder = create_coders(3, table);
+  first_coder = create_coders(4, table);
   current_coder = first_coder;
   first = TRUE;
   while (current_coder != first_coder  ||  first)
