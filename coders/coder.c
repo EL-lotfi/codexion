@@ -107,7 +107,7 @@ t_coder *coder_init(t_table *table)
   return (coder);
 }
 
-t_coder *create_coders(int nbr_coders, t_table *table)
+t_coder *create_coders(t_table *table)
 {
   t_coder *first_coder;
   t_coder *last_coder;
@@ -120,7 +120,7 @@ t_coder *create_coders(int nbr_coders, t_table *table)
   first_coder->prv_coder = first_coder;
   last_coder = first_coder;
   id_coder = 2;
-  while (--nbr_coders)
+  while (--table->number_of_coders)
   {
     while (last_coder->nxt_coder != first_coder)
       last_coder = last_coder->nxt_coder;

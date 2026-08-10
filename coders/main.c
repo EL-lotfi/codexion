@@ -12,27 +12,76 @@
 
 #include "coder.h"
 
-int main()
+t_bool is_simultaion_over(t_coder *first_coder)
 {
-  t_table *table;
+  t_coder   *current_coder;
+  t_bool    first;
+
+  first = TRUE;
+  while (current_coder != first_coder  ||  first)
+  { 
+    if (current_coder->cmp_count < current_coder->table->nbr_compiles_required)
+      return (FALSE);
+    current_coder = current_coder->nxt_coder;
+    first = FALSE;
+  }
+  return (TRUE);
+}
+
+t_bool is_burned_out(t_coder *coder)
+{
+  if (get_current_time_ms() - coder->last_readiness_time < coder->table->time_to_burnout)
+    return (FALSE);
+  return (TRUE);
+}
+
+void *monitor_routine(void *param)
+{
   t_coder *first_coder;
   t_coder *current_coder;
   t_bool  first;
 
+  first_coder = (t_coder *)param;
+  while (TRUE)
+  { 
+    if (is_simulation_over(first_coder)
+
+    if (is_burned_out(current_coder))
+    {
+      // clean_up(first_coder);
+      pthread_mutex_lock(&current_coder->table->print_mutex);
+      printf("%lld\t%d\tis burned out\n", count_elapsed_time(current_coder->table), current_coder->id_coder);
+      pthread_mutex_unlock(&current_coder->table->print_mutex);
+    }
+    current_coder = current_coder->nxt_coder;
+    first = FALSE;
+  }
+}
+
+int main()
+{
+  pthread_t monitor;
+  t_table   *table;
+  t_coder   *first_coder;
+  t_coder   *current_coder;
+  t_bool    first;
+
   table = malloc(sizeof(t_table));
+  table->number_of_coders = 3;
   table->time_to_compile = 300;
   table->time_to_debug = 200;
   table->time_to_refactor = 100;
-  table->start_time = get_current_time_ms();
   table->nbr_compiles_required = 5;
-  table->dongle_cooldown = 400;
+  table->dongle_cooldown = 3;
   table->scheduler_type = FIFO;
+  table->start_time = get_current_time_ms();
   if(pthread_mutex_init(&table->print_mutex, NULL) != 0)
   {
     // clean_up();
     return 0;
   }
-  first_coder = create_coders(3, table);
+  first_coder = create_coders(table);
+  pthread_create(&monitor, NULL, monitor_routine, first_coder);
   current_coder = first_coder;
   first = TRUE;
   while (current_coder != first_coder  ||  first)
@@ -43,6 +92,7 @@ int main()
   }
   first = TRUE;
   current_coder = first_coder;
+  pthread_join(monitor, NULL);
   while (current_coder != first_coder || first)
   { 
     pthread_join(current_coder->coder_thread, NULL);

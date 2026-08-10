@@ -34,7 +34,7 @@ void affect_dongle(t_coder *coder, t_side side)
     }
   }
   while (
-      // !is_dongle_available(coder_holder) || 
+      !is_dongle_available(coder_holder) ||
       coder_holder->f_dongle->queue[0] != coder->id_coder)
     pthread_cond_wait(&coder_holder->f_dongle->dongle_cond, &coder_holder->f_dongle->mutex);
   print_process(coder, TAKING_DONGLES);

@@ -51,20 +51,20 @@ typedef struct s_dongle{
 
 typedef struct s_table {
   pthread_mutex_t print_mutex;
-  long long       start_time;
+  int             number_of_coders;
   int             time_to_compile;
   int             time_to_burnout;
   int             time_to_debug;
   int             time_to_refactor;
   int             nbr_compiles_required;
   int             dongle_cooldown;
+  long long       start_time;
   t_scheduler     scheduler_type;
 } t_table;
 
 typedef struct s_coder {
   int             id_coder;
   pthread_t       coder_thread;
-  int             time_to_burnout;
   int             cmp_count;
   long long       last_readiness_time;
   t_dongle        *f_dongle;
@@ -77,7 +77,7 @@ void      *coder_routine(void *param);
 long long count_elapsed_time();
 long long get_current_time_ms();
 void      print_process(t_coder *coder, t_process process);
-t_coder   *create_coders(int nbr_coders, t_table *table);
+t_coder   *create_coders(t_table *table);
 t_bool    is_dongle_available(t_coder *coder);
 void      affect_dongle(t_coder *coder, t_side side);
 void      detach_dongle(t_coder *coder, t_side side);
