@@ -63,7 +63,9 @@ void *monitor_routine(void *param)
   { 
     if (is_simulation_over(first_coder))
     {
-      return ((void *)0);
+      first_coder->table->is_simulation_over = TRUE;
+      return (NULL);
+      
     }
     if (is_burned_out(current_coder))
     {
@@ -71,9 +73,9 @@ void *monitor_routine(void *param)
       pthread_mutex_lock(&current_coder->table->print_mutex);
       printf("%lld\t%d\tis burned out\n", count_elapsed_time(current_coder->table), current_coder->id_coder);
       pthread_mutex_unlock(&current_coder->table->print_mutex);
-      return ((void *)1);
+      first_coder->table->burnout_detected = TRUE;
+      return (NULL);
     }
-
     current_coder = current_coder->nxt_coder;
     first = FALSE;
   }
@@ -121,9 +123,5 @@ int main()
     current_coder = current_coder->nxt_coder;
     first = FALSE;
   }
-  pthread_join(monitor, &monitor_result);
-  if (*(int *)monitor_result == 0)
-    return (1);
-  if (*(int *)monitor_result == 1)
-    return (0);
+  pthread_join(monitor, NULL);
 }

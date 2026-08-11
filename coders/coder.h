@@ -58,6 +58,8 @@ typedef struct s_table {
   int             time_to_refactor;
   int             nbr_compiles_required;
   int             dongle_cooldown;
+  t_bool          burnout_detected;
+  t_bool          is_simulation_over;
   long long       start_time;
   t_scheduler     scheduler_type;
 } t_table;

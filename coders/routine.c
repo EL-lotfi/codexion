@@ -64,6 +64,9 @@ void *coder_routine(void *param)
 {
   t_coder *coder;
   coder = (t_coder *)param;
+
+  if (coder->table->is_simulation_over == TRUE || coder->table->burnout_detected == TRUE)
+    return NULL);
   while (coder->cmp_count < coder->table->nbr_compiles_required)
   {
     if (coder->id_coder % 2 ==  0)
