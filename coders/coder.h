@@ -6,14 +6,15 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 16:49:43 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/10 14:17:46 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/11 15:09:23 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CODER_H
 
-#include <stdlib.h>
+#include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/time.h>
 #include <pthread.h>
 
@@ -75,6 +76,7 @@ typedef struct s_coder {
   t_table         *table;
 } t_coder;
 
+void      *monitor_routine(void *param);
 void      *coder_routine(void *param);
 long long count_elapsed_time();
 long long get_current_time_ms();

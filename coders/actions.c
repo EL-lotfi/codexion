@@ -33,11 +33,11 @@ void affect_dongle(t_coder *coder, t_side side)
       redefine_priority(coder_holder);
     }
   }
-  while (
-      !is_dongle_available(coder_holder) ||
+  while ( !is_dongle_available(coder_holder) ||
       coder_holder->f_dongle->queue[0] != coder->id_coder)
     pthread_cond_wait(&coder_holder->f_dongle->dongle_cond, &coder_holder->f_dongle->mutex);
-  print_process(coder, TAKING_DONGLES);
+  if (!coder->table->is_simulation_over && !coder->table->burnout_detected)
+    print_process(coder, TAKING_DONGLES);
   pthread_mutex_unlock(&coder_holder->f_dongle->mutex);
 }
 
