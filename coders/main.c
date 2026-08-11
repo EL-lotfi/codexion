@@ -12,12 +12,28 @@
 
 #include "coder.h"
 
-t_bool is_simultaion_over(t_coder *first_coder)
+// void clean_up(t_coder *first_coder)
+// {
+//   t_coder     *current_coder;
+//   t_bool first;
+//
+//   current_coder = first_coder;
+//   first = TRUE;
+//   current_coder = first_coder;
+//   while (current_coder != first_coder  ||  first)
+//   { 
+//     current_coder = current_coder->nxt_coder;
+//     first = FALSE;
+//   }
+// }
+
+t_bool is_simulation_over(t_coder *first_coder)
 {
   t_coder   *current_coder;
   t_bool    first;
 
   first = TRUE;
+  current_coder = first_coder;
   while (current_coder != first_coder  ||  first)
   { 
     if (current_coder->cmp_count < current_coder->table->nbr_compiles_required)
@@ -42,17 +58,22 @@ void *monitor_routine(void *param)
   t_bool  first;
 
   first_coder = (t_coder *)param;
+  current_coder = first_coder;
   while (TRUE)
   { 
-    if (is_simulation_over(first_coder)
-
+    if (is_simulation_over(first_coder))
+    {
+      return ((void *)0);
+    }
     if (is_burned_out(current_coder))
     {
       // clean_up(first_coder);
       pthread_mutex_lock(&current_coder->table->print_mutex);
       printf("%lld\t%d\tis burned out\n", count_elapsed_time(current_coder->table), current_coder->id_coder);
       pthread_mutex_unlock(&current_coder->table->print_mutex);
+      return ((void *)1);
     }
+
     current_coder = current_coder->nxt_coder;
     first = FALSE;
   }
@@ -65,14 +86,16 @@ int main()
   t_coder   *first_coder;
   t_coder   *current_coder;
   t_bool    first;
+  void      *monitor_result;
 
   table = malloc(sizeof(t_table));
   table->number_of_coders = 3;
-  table->time_to_compile = 300;
+  table->time_to_compile = 100;
   table->time_to_debug = 200;
   table->time_to_refactor = 100;
+  table->time_to_burnout = 100;
   table->nbr_compiles_required = 5;
-  table->dongle_cooldown = 3;
+  table->dongle_cooldown = 9;
   table->scheduler_type = FIFO;
   table->start_time = get_current_time_ms();
   if(pthread_mutex_init(&table->print_mutex, NULL) != 0)
@@ -81,7 +104,6 @@ int main()
     return 0;
   }
   first_coder = create_coders(table);
-  pthread_create(&monitor, NULL, monitor_routine, first_coder);
   current_coder = first_coder;
   first = TRUE;
   while (current_coder != first_coder  ||  first)
@@ -90,13 +112,18 @@ int main()
     current_coder = current_coder->nxt_coder;
     first = FALSE;
   }
+  pthread_create(&monitor, NULL, monitor_routine, first_coder);
   first = TRUE;
   current_coder = first_coder;
-  pthread_join(monitor, NULL);
   while (current_coder != first_coder || first)
   { 
     pthread_join(current_coder->coder_thread, NULL);
     current_coder = current_coder->nxt_coder;
     first = FALSE;
   }
+  pthread_join(monitor, &monitor_result);
+  if (*(int *)monitor_result == 0)
+    return (1);
+  if (*(int *)monitor_result == 1)
+    return (0);
 }

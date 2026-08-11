@@ -31,7 +31,5 @@ t_bool is_dongle_available(t_coder *coder)
     return (TRUE);
   while (get_current_time_ms() - coder->f_dongle->last_use_time < coder->table->dongle_cooldown)
     ;
-    // printf("waiting the dongle in front of the coder %d\n", coder->id_coder);
-  // pthread_cond_signal(&coder->f_dongle->dongle_cond);
   return (TRUE);
 }
