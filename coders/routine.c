@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/05 14:54:35 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/11 16:41:02 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/11 16:57:40 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void compile_process(t_coder *coder)
 {
   long long compile_start;
 
-  if (!coder->table->is_simulation_over && !coder->table->burnout_detected) 
+  if (!coder->table->burnout_detected) 
     print_process(coder, COMPILING);
   compile_start = get_current_time_ms();
   while (
@@ -48,7 +48,7 @@ void debug_process(t_coder *coder)
 {
   long long debug_start;
 
-  if (!coder->table->is_simulation_over && !coder->table->burnout_detected) 
+  if (!coder->table->burnout_detected) 
     print_process(coder, DEBUGGING);
   debug_start = get_current_time_ms();
   while (
@@ -63,7 +63,7 @@ void refactor_process(t_coder *coder)
 {
   long long refactor_start;
 
-  if (!coder->table->is_simulation_over && !coder->table->burnout_detected) 
+  if (!coder->table->burnout_detected) 
     print_process(coder, REFACTORING);
   refactor_start = get_current_time_ms();
   while (
