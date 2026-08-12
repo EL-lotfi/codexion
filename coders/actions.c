@@ -23,10 +23,15 @@ void affect_dongle(t_coder *coder, t_side side)
   if (coder_holder->table->scheduler_type == FIFO)
   {
     if (side == LEFT)
+    {
       coder_holder->f_dongle->r_request = TRUE;
+      redefine_priority(coder);
+    }
     else
+    {
       coder_holder->f_dongle->l_request = TRUE;
-    redefine_priority(coder);
+      redefine_priority(coder_holder);
+    }
   }
   while ( !is_dongle_available(coder_holder) ||
       coder_holder->f_dongle->queue[0] != coder->id_coder)

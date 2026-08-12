@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/11 14:17:12 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/12 09:34:19 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/11 16:55:12 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,9 @@ void *monitor_routine(void *param)
   while (TRUE)
   { 
     if (is_simulation_over(current_coder))
+    {
       return (NULL);
+    }
     if (is_burned_out(current_coder))
     {
       pthread_mutex_lock(&current_coder->table->print_mutex);

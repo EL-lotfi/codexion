@@ -33,7 +33,7 @@ typedef enum e_side{
 
 typedef enum e_bool{
   FALSE,
-  TRUE  
+  TRUE
 } t_bool;
 
 typedef enum e_scheduler {
