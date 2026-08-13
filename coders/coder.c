@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/05 14:54:22 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/12 17:18:17 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/10 14:14:44 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,11 @@
 
 void init_queue(t_coder *coder)
 {
+    if (!coder->f_dongle->queue)
+    {
+      // clean_up();
+      return ;
+    }
     if (coder->id_coder % 2 ==  0)
     {
       coder->f_dongle->queue[0] = coder->id_coder;
@@ -35,8 +40,16 @@ void init_requests(t_coder *first_coder)
   current_coder = first_coder;
   while (current_coder != first_coder->nxt_coder  ||  first)
   {
-    current_coder->f_dongle->l_request = FALSE;
-    current_coder->f_dongle->r_request = FALSE;
+    if (current_coder->id_coder % 2 ==  0)
+    {
+      current_coder->f_dongle->l_request = TRUE;
+      current_coder->f_dongle->r_request = TRUE;
+    }
+    else
+    {
+      current_coder->f_dongle->l_request = FALSE;
+      current_coder->f_dongle->r_request = FALSE;
+    }
     current_coder->f_dongle->last_use_time = 0;
     current_coder = current_coder->nxt_coder;
     first = FALSE;

@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/08 17:46:04 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/12 17:10:29 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/11 16:45:27 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static t_bool parse_positive_int(const char *argument, int *result)
       return (FALSE);
     index++;
   }
-  if (value < 0)
+  if (value <= 0)
     return (FALSE);
   *result = (int)value;
   return (TRUE);
@@ -50,9 +50,9 @@ static t_bool parse_positive_int(const char *argument, int *result)
 
 static t_bool parse_scheduler(const char *argument, t_scheduler *scheduler)
 {
-  if (same_string(argument, "FIFO") || same_string(argument, "fifo"))
+  if (same_string(argument, "FIFO"))
     *scheduler = FIFO;
-  else if (same_string(argument, "EDF") || same_string(argument, "edf"))
+  else if (same_string(argument, "EDF"))
     *scheduler = EDF;
   else
     return (FALSE);

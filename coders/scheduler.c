@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 16:15:32 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/12 17:16:50 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/10 11:53:33 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,12 @@
 void edf_priority(t_coder *coder)
 {
   if (coder->prv_coder->f_dongle->queue[0] != coder->id_coder &&
-      coder->last_readiness_time <= coder->prv_coder->last_readiness_time
+      coder->last_readiness_time < coder->prv_coder->last_readiness_time
       && (coder->prv_coder->cmp_count == coder->table->nbr_compiles_required
       || coder->cmp_count != coder->table->nbr_compiles_required))
     swap_queue(coder->prv_coder->f_dongle->queue);
   else if (coder->f_dongle->queue[0] != coder->id_coder &&
-      coder->last_readiness_time <= coder->nxt_coder->last_readiness_time
+      coder->last_readiness_time < coder->nxt_coder->last_readiness_time
       && (coder->nxt_coder->cmp_count == coder->table->nbr_compiles_required
     || coder->cmp_count != coder->table->nbr_compiles_required))
     swap_queue(coder->f_dongle->queue);
