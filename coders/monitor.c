@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/11 14:17:12 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/14 10:31:33 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/14 18:31:54 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,12 +69,12 @@ void *monitor_routine(void *param)
     if (is_burned_out(current_coder))
     {
       pthread_mutex_lock(&current_coder->table->print_mutex);
-      printf("%lld\t%d\tis burned out\n", count_elapsed_time(current_coder->table), current_coder->id_coder);
+      printf("%lld %d burned out\n", count_elapsed_time(current_coder->table), current_coder->id_coder);
       pthread_mutex_unlock(&current_coder->table->print_mutex);
       current_coder->table->burnout_detected = TRUE;
       return (NULL);
     }
     current_coder = current_coder->nxt_coder;
-    usleep(1000);
+    usleep(100);
   }
 }
