@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/11 14:17:12 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/14 18:31:54 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/14 22:06:02 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void wake_everybody(t_coder *first_coder)
   first = TRUE;
   while (current_coder != first_coder  ||  first)
   { 
-    pthread_cond_signal(&current_coder->r_dongle->dongle_cond);
+    pthread_cond_signal(&current_coder->l_dongle->dongle_cond);
     current_coder = current_coder->nxt_coder;
     first = FALSE;
   }
@@ -43,7 +43,6 @@ t_bool is_simulation_over(t_coder *first_coder)
     first = FALSE;
   }
   current_coder->table->is_simulation_over = TRUE;
-  wake_everybody(first_coder);
   return (TRUE);
 }
 
@@ -51,6 +50,7 @@ t_bool is_burned_out(t_coder *coder)
 {
   if (get_current_time_ms() - coder->last_compile_start < coder->table->time_to_burnout)
     return (FALSE);
+  coder->table->burnout_detected = TRUE;
   wake_everybody(coder);
   return (TRUE);
 }
@@ -71,10 +71,9 @@ void *monitor_routine(void *param)
       pthread_mutex_lock(&current_coder->table->print_mutex);
       printf("%lld %d burned out\n", count_elapsed_time(current_coder->table), current_coder->id_coder);
       pthread_mutex_unlock(&current_coder->table->print_mutex);
-      current_coder->table->burnout_detected = TRUE;
       return (NULL);
     }
     current_coder = current_coder->nxt_coder;
-    usleep(100);
+    usleep(1000);
   }
 }

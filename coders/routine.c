@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/05 14:54:35 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/14 18:31:19 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/14 22:00:33 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,11 @@
 void print_process(t_coder *coder, t_process process)
 {
   pthread_mutex_lock(&coder->table->print_mutex);
+  if (coder->table->burnout_detected == TRUE)
+  {
+    pthread_mutex_unlock(&coder->table->print_mutex);
+    return ;
+  }
   if (process == TAKING_DONGLES)
     printf("%lld %d has taken a dongle\n", count_elapsed_time(coder->table), coder->id_coder);
   else if (process == COMPILING)
@@ -32,8 +37,7 @@ void compile_process(t_coder *coder)
   long long compile_start;
 
   coder->last_compile_start = get_current_time_ms();
-  if (!coder->table->burnout_detected) 
-    print_process(coder, COMPILING);
+  print_process(coder, COMPILING);
   compile_start = get_current_time_ms();
   while (!coder->table->burnout_detected
       && get_current_time_ms() - compile_start < coder->table->time_to_compile)
@@ -47,8 +51,7 @@ void debug_process(t_coder *coder)
 {
   long long debug_start;
 
-  if (!coder->table->burnout_detected) 
-    print_process(coder, DEBUGGING);
+  print_process(coder, DEBUGGING);
   debug_start = get_current_time_ms();
   while (!coder->table->burnout_detected
       && get_current_time_ms() - debug_start < coder->table->time_to_debug)
@@ -60,8 +63,7 @@ void refactor_process(t_coder *coder)
 {
   long long refactor_start;
 
-  if (!coder->table->burnout_detected) 
-    print_process(coder, REFACTORING);
+  print_process(coder, REFACTORING);
   refactor_start = get_current_time_ms();
   while (!coder->table->burnout_detected
       && get_current_time_ms() - refactor_start < coder->table->time_to_refactor)

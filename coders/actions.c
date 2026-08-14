@@ -20,6 +20,8 @@ void affect_dongle(t_coder *coder, t_side side)
   else
     dongle = coder->r_dongle;;
   pthread_mutex_lock(&dongle->mutex);
+  if (coder->l_dongle == coder->r_dongle && side == RIGHT)
+    pthread_cond_wait(&dongle->dongle_cond, &dongle->mutex);
   if (side == LEFT)
     dongle->r_request = TRUE;
   else

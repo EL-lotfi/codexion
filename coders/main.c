@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/08 17:46:04 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/14 18:29:51 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/14 22:03:52 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,7 @@ static t_bool parse_arguments(int argc, char **argv, t_table *table)
 {
   if (argc != 9)
   {
-    printf("Usage: %s number_of_coders time_to_burnout time_to_compile time_to_debug time_to_refactor number_of_compiles_required dongle_cooldown scheduler\n", argv[0]);
-    printf("scheduler must be FIFO or EDF\n");
+    printf("Usage: %s arguments aren't valid\n", argv[0]);
     return (FALSE);
   }
   if (!parse_positive_int(argv[1], &table->number_of_coders))
@@ -88,22 +87,11 @@ static t_bool parse_arguments(int argc, char **argv, t_table *table)
   return (TRUE);
 }
 
-int main(int argc, char **argv)
+static int create_and_join(t_coder *first_coder, pthread_t *monitor)
 {
-  pthread_t monitor;
-  t_table   table;
-  t_coder   *first_coder;
-  t_coder   *current_coder;
-  t_bool    first;
+  t_coder *current_coder;
+  t_bool  first;
 
-  if (!parse_arguments(argc, argv, &table))
-    return (1);
-  table.start_time = get_current_time_ms();
-  if (pthread_mutex_init(&table.print_mutex, NULL) != 0)
-    return (1);
-  first_coder = create_coders(&table);
-  if (!first_coder)
-    return (1);
   current_coder = first_coder;
   first = TRUE;
   while (current_coder != first_coder || first)
@@ -113,7 +101,7 @@ int main(int argc, char **argv)
     current_coder = current_coder->nxt_coder;
     first = FALSE;
   }
-  if (pthread_create(&monitor, NULL, monitor_routine, first_coder) != 0)
+  if (pthread_create(monitor, NULL, monitor_routine, first_coder) != 0)
     return (1);
   first = TRUE;
   current_coder = first_coder;
@@ -123,10 +111,33 @@ int main(int argc, char **argv)
     current_coder = current_coder->nxt_coder;
     first = FALSE;
   }
-  pthread_join(monitor, NULL);
+  return (0);
+}
+
+int main(int argc, char **argv)
+{
+  pthread_t monitor;
+  t_table   table;
+  t_coder   *first_coder;
+
+  if (!parse_arguments(argc, argv, &table))
+    return (1);
+  table.start_time = get_current_time_ms();
+  if (pthread_mutex_init(&table.print_mutex, NULL) != 0)
+    return (1);
+  first_coder = create_coders(&table);
+  if (!first_coder)
+    return (1);
+  if (create_and_join(first_coder, &monitor))
+  {
+    // clean_up();
+    return (1);
+  }
+    
   if (table.is_simulation_over)
     return (0);
   if (table.burnout_detected)
     return (1);
+  pthread_join(monitor, NULL);
   return (0);
 }
