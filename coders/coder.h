@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 16:49:43 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/11 15:09:23 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/14 13:32:42 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,9 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <pthread.h>
+
+typedef struct s_dongle t_dongle;
+typedef struct s_table t_table;
 
 typedef enum s_process{
   TAKING_DONGLES,
@@ -41,12 +44,27 @@ typedef enum e_scheduler {
   EDF
 } t_scheduler;
 
+typedef struct s_coder {
+  pthread_t       coder_thread;
+  int             id_coder;
+  int             cmp_count;
+  long long       last_compile_start;
+  t_dongle        *r_dongle;
+  t_dongle        *l_dongle;
+  struct s_coder  *nxt_coder;
+  struct s_coder  *prv_coder;
+  t_table         *table;
+} t_coder;
+
 typedef struct s_dongle{
   pthread_cond_t  dongle_cond;
   pthread_mutex_t mutex;
   long long       last_use_time;
+  t_coder         *r_coder;
+  t_coder         *l_coder;
   t_bool          r_request;
   t_bool          l_request;
+  t_table         *table;
   int             *queue;
 } t_dongle;
 
@@ -66,27 +84,16 @@ typedef struct s_table {
   t_scheduler     scheduler_type;
 } t_table;
 
-typedef struct s_coder {
-  int             id_coder;
-  pthread_t       coder_thread;
-  int             cmp_count;
-  long long       last_readiness_time;
-  t_dongle        *f_dongle;
-  struct s_coder  *nxt_coder;
-  struct s_coder  *prv_coder;
-  t_table         *table;
-} t_coder;
-
 void      *monitor_routine(void *param);
 void      *coder_routine(void *param);
 long long count_elapsed_time();
 long long get_current_time_ms();
 void      print_process(t_coder *coder, t_process process);
 t_coder   *create_coders(t_table *table);
-t_bool    is_dongle_available(t_coder *coder);
+t_bool    is_dongle_available(t_dongle *dongle);
 void      affect_dongle(t_coder *coder, t_side side);
 void      detach_dongle(t_coder *coder, t_side side);
 void      swap_queue(int *queue);
-void      redefine_priority(t_coder *coder);
+void      redefine_priority(t_dongle *dongle);
 
 #endif // !CODER_H

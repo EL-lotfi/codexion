@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/11 14:17:12 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/11 16:55:12 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/14 10:31:33 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void wake_everybody(t_coder *first_coder)
   first = TRUE;
   while (current_coder != first_coder  ||  first)
   { 
-    pthread_cond_signal(&current_coder->f_dongle->dongle_cond);
+    pthread_cond_signal(&current_coder->r_dongle->dongle_cond);
     current_coder = current_coder->nxt_coder;
     first = FALSE;
   }
@@ -49,7 +49,7 @@ t_bool is_simulation_over(t_coder *first_coder)
 
 t_bool is_burned_out(t_coder *coder)
 {
-  if (get_current_time_ms() - coder->last_readiness_time < coder->table->time_to_burnout)
+  if (get_current_time_ms() - coder->last_compile_start < coder->table->time_to_burnout)
     return (FALSE);
   wake_everybody(coder);
   return (TRUE);
@@ -58,7 +58,6 @@ t_bool is_burned_out(t_coder *coder)
 void *monitor_routine(void *param)
 {
   t_coder *current_coder;
-  t_bool  first;
 
   current_coder = (t_coder *)param;
   while (TRUE)
@@ -76,7 +75,6 @@ void *monitor_routine(void *param)
       return (NULL);
     }
     current_coder = current_coder->nxt_coder;
-    first = FALSE;
-    usleep(100);
+    usleep(1000);
   }
 }

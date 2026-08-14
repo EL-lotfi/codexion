@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 16:15:32 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/11 15:31:45 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/14 10:35:53 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,12 @@ long long get_current_time_ms()
   return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
-t_bool is_dongle_available(t_coder *coder)
+t_bool is_dongle_available(t_dongle *dongle)
 {
-  if (coder->f_dongle->last_use_time == 0)
+  if (dongle->last_use_time == 0)
     return (TRUE);
-  while (
-      !coder->table->is_simulation_over &&
-      !coder->table->burnout_detected &&
-      get_current_time_ms() - coder->f_dongle->last_use_time < coder->table->dongle_cooldown)
+  while (!dongle->table->burnout_detected
+      && get_current_time_ms() - dongle->last_use_time < dongle->table->dongle_cooldown)
     ;
   return (TRUE);
 }

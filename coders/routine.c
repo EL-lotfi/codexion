@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/05 14:54:35 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/11 16:41:02 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/14 13:07:44 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,16 +31,15 @@ void compile_process(t_coder *coder)
 {
   long long compile_start;
 
+  coder->last_compile_start = get_current_time_ms();
   if (!coder->table->is_simulation_over && !coder->table->burnout_detected) 
     print_process(coder, COMPILING);
   compile_start = get_current_time_ms();
-  while (
-      !coder->table->is_simulation_over &&
-      !coder->table->burnout_detected &&
-      get_current_time_ms() - compile_start < coder->table->time_to_compile)
+  while (!coder->table->burnout_detected
+      && get_current_time_ms() - compile_start < coder->table->time_to_compile)
     ;
-  coder->f_dongle->last_use_time = get_current_time_ms();
-  coder->prv_coder->f_dongle->last_use_time = get_current_time_ms();
+  coder->l_dongle->last_use_time = get_current_time_ms();
+  coder->r_dongle->last_use_time = get_current_time_ms();
   coder->cmp_count += 1; 
 }
 
@@ -51,10 +50,8 @@ void debug_process(t_coder *coder)
   if (!coder->table->is_simulation_over && !coder->table->burnout_detected) 
     print_process(coder, DEBUGGING);
   debug_start = get_current_time_ms();
-  while (
-      !coder->table->is_simulation_over &&
-      !coder->table->burnout_detected &&
-      get_current_time_ms() - debug_start < coder->table->time_to_debug)
+  while (!coder->table->burnout_detected
+      && get_current_time_ms() - debug_start < coder->table->time_to_debug)
     ;
   return ;
 }
@@ -66,10 +63,8 @@ void refactor_process(t_coder *coder)
   if (!coder->table->is_simulation_over && !coder->table->burnout_detected) 
     print_process(coder, REFACTORING);
   refactor_start = get_current_time_ms();
-  while (
-      !coder->table->is_simulation_over &&
-      !coder->table->burnout_detected &&
-      get_current_time_ms() - refactor_start < coder->table->time_to_refactor)
+  while (!coder->table->burnout_detected
+      && get_current_time_ms() - refactor_start < coder->table->time_to_refactor)
     ;
   return ;
 }

@@ -6,42 +6,42 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 16:15:32 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/10 11:53:33 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/14 10:35:20 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "coder.h"
 
-void edf_priority(t_coder *coder)
+static void edf_priority(t_dongle *dongle)
 {
-  if (coder->prv_coder->f_dongle->queue[0] != coder->id_coder &&
-      coder->last_readiness_time < coder->prv_coder->last_readiness_time
-      && (coder->prv_coder->cmp_count == coder->table->nbr_compiles_required
-      || coder->cmp_count != coder->table->nbr_compiles_required))
-    swap_queue(coder->prv_coder->f_dongle->queue);
-  else if (coder->f_dongle->queue[0] != coder->id_coder &&
-      coder->last_readiness_time < coder->nxt_coder->last_readiness_time
-      && (coder->nxt_coder->cmp_count == coder->table->nbr_compiles_required
-    || coder->cmp_count != coder->table->nbr_compiles_required))
-    swap_queue(coder->f_dongle->queue);
+  if (dongle->queue[0] != dongle->l_coder->id_coder
+      && dongle->l_coder->last_compile_start <= dongle->r_coder->last_compile_start
+      && (dongle->r_coder->cmp_count == dongle->table->nbr_compiles_required
+      || dongle->l_coder->cmp_count != dongle->r_coder->table->nbr_compiles_required))
+    swap_queue(dongle->queue);
+  else if (dongle->queue[0] != dongle->r_coder->id_coder
+      && dongle->r_coder->last_compile_start <= dongle->l_coder->last_compile_start
+      && (dongle->l_coder->cmp_count == dongle->table->nbr_compiles_required
+    || dongle->r_coder->cmp_count != dongle->table->nbr_compiles_required))
+    swap_queue(dongle->queue);
 }
 
-void fifo_priority(t_coder *coder)
+static void fifo_priority(t_dongle *dongle)
 {
-  if (coder->f_dongle->r_request == FALSE && 
-      coder->f_dongle->l_request ==  TRUE &&
-      coder->f_dongle->queue[0] != coder->id_coder)
-    swap_queue(coder->f_dongle->queue);
-  else if (coder->prv_coder->f_dongle->l_request ==  FALSE &&
-      coder->prv_coder->f_dongle->r_request == TRUE && 
-      coder->prv_coder->f_dongle->queue[0] != coder->id_coder)
-    swap_queue(coder->prv_coder->f_dongle->queue);
+  if (dongle->queue[0] != dongle->l_coder->id_coder
+      && dongle->r_request == FALSE
+      && dongle->l_request ==  TRUE)
+    swap_queue(dongle->queue);
+  else if (dongle->queue[0] != dongle->r_coder->id_coder
+      && dongle->l_request ==  FALSE
+      && dongle->r_request == TRUE)
+    swap_queue(dongle->queue);
 }
 
-void redefine_priority(t_coder *coder)
+void redefine_priority(t_dongle *dongle)
 {
-  if (coder->table->scheduler_type == EDF)
-    edf_priority(coder);
-  else if (coder->table->scheduler_type == FIFO)
-    fifo_priority(coder);
+  if (dongle->table->scheduler_type == EDF)
+    edf_priority(dongle);
+  else if (dongle->table->scheduler_type == FIFO)
+    fifo_priority(dongle);
 }
