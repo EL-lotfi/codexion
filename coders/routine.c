@@ -6,94 +6,104 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/05 14:54:35 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/14 22:00:33 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/15 10:19:04 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "coder.h"
 
-void print_process(t_coder *coder, t_process process)
+void	print_process(t_coder *coder, t_process process)
 {
-  pthread_mutex_lock(&coder->table->print_mutex);
-  if (coder->table->burnout_detected == TRUE)
-  {
-    pthread_mutex_unlock(&coder->table->print_mutex);
-    return ;
-  }
-  if (process == TAKING_DONGLES)
-    printf("%lld %d has taken a dongle\n", count_elapsed_time(coder->table), coder->id_coder);
-  else if (process == COMPILING)
-    printf("%lld %d is compiling\n", count_elapsed_time(coder->table), coder->id_coder);
-  else if (process == DEBUGGING)
-    printf("%lld %d is debugging\n", count_elapsed_time(coder->table), coder->id_coder);
-  else if (process == REFACTORING)
-    printf("%lld %d is refactoring\n", count_elapsed_time(coder->table), coder->id_coder);
-  pthread_mutex_unlock(&coder->table->print_mutex);
+	pthread_mutex_lock(&coder->table->print_mutex);
+	if (coder->table->burnout_detected == TRUE)
+	{
+		pthread_mutex_unlock(&coder->table->print_mutex);
+		return ;
+	}
+	if (process == TAKING_DONGLES)
+		printf("%lld %d has taken a dongle\n",
+			count_elapsed_time(coder->table),
+			coder->id_coder);
+	else if (process == COMPILING)
+		printf("%lld %d is compiling\n",
+			count_elapsed_time(coder->table),
+			coder->id_coder);
+	else if (process == DEBUGGING)
+		printf("%lld %d is debugging\n",
+			count_elapsed_time(coder->table),
+			coder->id_coder);
+	else if (process == REFACTORING)
+		printf("%lld %d is refactoring\n",
+			count_elapsed_time(coder->table),
+			coder->id_coder);
+	pthread_mutex_unlock(&coder->table->print_mutex);
 }
 
-void compile_process(t_coder *coder)
+void	compile_process(t_coder *coder)
 {
-  long long compile_start;
+	long long	compile_start;
 
-  coder->last_compile_start = get_current_time_ms();
-  print_process(coder, COMPILING);
-  compile_start = get_current_time_ms();
-  while (!coder->table->burnout_detected
-      && get_current_time_ms() - compile_start < coder->table->time_to_compile)
-    ;
-  coder->l_dongle->last_use_time = get_current_time_ms();
-  coder->r_dongle->last_use_time = get_current_time_ms();
-  coder->cmp_count += 1; 
+	coder->last_compile_start = get_current_time_ms();
+	print_process(coder, COMPILING);
+	compile_start = get_current_time_ms();
+	while (!coder->table->burnout_detected
+		&& get_current_time_ms() - compile_start
+		< coder->table->time_to_compile)
+		;
+	coder->l_dongle->last_use_time = get_current_time_ms();
+	coder->r_dongle->last_use_time = get_current_time_ms();
+	coder->cmp_count += 1;
 }
 
-void debug_process(t_coder *coder)
+void	debug_process(t_coder *coder)
 {
-  long long debug_start;
+	long long	debug_start;
 
-  print_process(coder, DEBUGGING);
-  debug_start = get_current_time_ms();
-  while (!coder->table->burnout_detected
-      && get_current_time_ms() - debug_start < coder->table->time_to_debug)
-    ;
-  return ;
+	print_process(coder, DEBUGGING);
+	debug_start = get_current_time_ms();
+	while (!coder->table->burnout_detected
+		&& get_current_time_ms() - debug_start
+		< coder->table->time_to_debug)
+		;
+	return ;
 }
 
-void refactor_process(t_coder *coder)
+void	refactor_process(t_coder *coder)
 {
-  long long refactor_start;
+	long long	refactor_start;
 
-  print_process(coder, REFACTORING);
-  refactor_start = get_current_time_ms();
-  while (!coder->table->burnout_detected
-      && get_current_time_ms() - refactor_start < coder->table->time_to_refactor)
-    ;
-  return ;
+	print_process(coder, REFACTORING);
+	refactor_start = get_current_time_ms();
+	while (!coder->table->burnout_detected
+		&& get_current_time_ms() - refactor_start
+		< coder->table->time_to_refactor)
+		;
+	return ;
 }
 
-void *coder_routine(void *param)
+void	*coder_routine(void *param)
 {
-  t_coder *coder;
-  coder = (t_coder *)param;
+	t_coder	*coder;
 
-  while (!coder->table->burnout_detected
-      && coder->cmp_count < coder->table->nbr_compiles_required)
-  {
-    if (coder->id_coder % 2 ==  0)
-    {
-      affect_dongle(coder, RIGHT);
-      affect_dongle(coder, LEFT);
-    }
-    else
-    {
-      affect_dongle(coder, LEFT);
-      affect_dongle(coder, RIGHT);
-    }
-    compile_process(coder);
-    detach_dongle(coder, RIGHT);
-    detach_dongle(coder, LEFT);
-    debug_process(coder);
-    refactor_process(coder);
-  }
-  return (NULL);
+	coder = (t_coder *)param;
+	while (!coder->table->burnout_detected
+		&& coder->cmp_count < coder->table->nbr_compiles_required)
+	{
+		if (coder->id_coder % 2 == 0)
+		{
+			affect_dongle(coder, RIGHT);
+			affect_dongle(coder, LEFT);
+		}
+		else
+		{
+			affect_dongle(coder, LEFT);
+			affect_dongle(coder, RIGHT);
+		}
+		compile_process(coder);
+		detach_dongle(coder, RIGHT);
+		detach_dongle(coder, LEFT);
+		debug_process(coder);
+		refactor_process(coder);
+	}
+	return (NULL);
 }
