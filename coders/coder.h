@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 16:49:43 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/15 10:46:01 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/16 21:28:24 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ typedef struct s_coder
 typedef struct s_dongle
 {
 	pthread_cond_t	dongle_cond;
-	pthread_mutex_t	mutex;
+	pthread_mutex_t	dongle_mutex;
 	long long		last_use_time;
 	t_coder			*r_coder;
 	t_coder			*l_coder;
@@ -101,5 +101,6 @@ void		affect_dongle(t_coder *coder, t_side side);
 void		detach_dongle(t_coder *coder, t_side side);
 void		swap_queue(int *queue);
 void		redefine_priority(t_dongle *dongle);
+void    clean_up(t_coder *first_coder);
 
 #endif
