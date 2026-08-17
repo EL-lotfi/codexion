@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/05 14:54:22 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/16 21:31:14 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/15 00:00:00 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static void	init_dongle(t_coder *coder)
 	{
 		return ;
 	}
-	if (pthread_mutex_init(&dongle->dongle_mutex, NULL) != 0)
+	if (pthread_mutex_init(&dongle->mutex, NULL) != 0)
 	{
 		return ;
 	}
@@ -67,7 +67,7 @@ static void	init_dongles(t_coder *coder)
 
 static t_coder	*coder_init(int id_coder, t_table *table)
 {
-	t_coder		*coder;
+	t_coder	*coder;
 	t_dongle	*dongle;
 
 	coder = malloc(sizeof(t_coder));

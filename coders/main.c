@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/08 17:46:04 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/16 21:59:26 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/15 00:00:00 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 static t_bool	parse_positive_int(const char *argument, int *result)
 {
 	long long	value;
-	int			index;
+	int		index;
 
 	if (!argument || argument[0] == '\0')
 		return (FALSE);
@@ -34,19 +34,6 @@ static t_bool	parse_positive_int(const char *argument, int *result)
 	if (value < 0)
 		return (FALSE);
 	*result = (int)value;
-	return (TRUE);
-}
-
-static t_bool	parse_scheduler(t_table *table, char *scheduler)
-{
-	if (strcmp(scheduler, "FIFO") != 0 && strcmp(scheduler, "fifo") != 0)
-	{
-		if (strcmp(scheduler, "EDF") != 0 && strcmp(scheduler, "edf") != 0)
-			return (FALSE);
-		table->scheduler_type = EDF;
-	}
-	else
-		table->scheduler_type = FIFO;
 	return (TRUE);
 }
 
@@ -71,8 +58,14 @@ static t_bool	parse_arguments(int argc, char **argv, t_table *table)
 		return (FALSE);
 	if (!parse_positive_int(argv[7], &table->dongle_cooldown))
 		return (FALSE);
-	if (!parse_scheduler(table, argv[8]))
-		return (FALSE);
+	if (strcmp(argv[8], "FIFO") != 0 && strcmp(argv[8], "fifo") != 0)
+	{
+		if (strcmp(argv[8], "EDF") != 0 && strcmp(argv[8], "edf") != 0)
+			return (FALSE);
+		table->scheduler_type = EDF;
+	}
+	else
+		table->scheduler_type = FIFO;
 	table->burnout_detected = FALSE;
 	table->is_simulation_over = FALSE;
 	return (TRUE);
@@ -121,13 +114,12 @@ int	main(int argc, char **argv)
 	if (!first_coder)
 		return (1);
 	if (create_and_join(first_coder, &monitor))
-  {
-    clean_up(first_coder);
 		return (1);
-  }
-	if (table.is_simulation_over || table.burnout_detected)
-    return (0);
+	if (table.is_simulation_over)
+		return (0);
+	if (table.burnout_detected)
+		return (1);
 	pthread_join(monitor, NULL);
-  clean_up(first_coder);
 	return (0);
 }
+
