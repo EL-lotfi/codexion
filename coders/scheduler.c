@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 16:15:32 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/15 10:19:20 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/19 22:13:03 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,8 @@ static void	fifo_priority(t_dongle *dongle)
 
 void	redefine_priority(t_dongle *dongle)
 {
-	if (dongle->table->scheduler_type == EDF)
+	if (get_table_attribute(dongle->table, scheduler_type) == EDF)
 		edf_priority(dongle);
-	else if (dongle->table->scheduler_type == FIFO)
+	else if (get_table_attribute(dongle->table, scheduler_type) == FIFO)
 		fifo_priority(dongle);
 }
-

@@ -47,7 +47,7 @@ static void	init_dongle(t_coder *coder)
 	{
 		return ;
 	}
-	if (pthread_mutex_init(&dongle->mutex, NULL) != 0)
+	if (pthread_mutex_init(&dongle->dongle_mutex, NULL) != 0)
 	{
 		return ;
 	}

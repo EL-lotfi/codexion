@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 16:49:43 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/15 10:46:01 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/19 18:51:19 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,19 @@
 
 typedef struct s_dongle	t_dongle;
 typedef struct s_table	t_table;
+
+typedef enum e_attribute
+{
+	time_to_compile,
+	time_to_debug,
+	time_to_refactor,
+	time_to_burnout,
+  dongle_cooldown,
+	nbr_compiles_required,
+  burnout_detected,
+  start_time,
+  scheduler_type
+}	t_attribute;
 
 typedef enum e_process
 {
@@ -50,6 +63,7 @@ typedef enum e_scheduler
 
 typedef struct s_coder
 {
+	pthread_mutex_t		coder_mutex;
 	pthread_t		coder_thread;
 	int				id_coder;
 	int				cmp_count;
@@ -64,7 +78,7 @@ typedef struct s_coder
 typedef struct s_dongle
 {
 	pthread_cond_t	dongle_cond;
-	pthread_mutex_t	mutex;
+	pthread_mutex_t	dongle_mutex;
 	long long		last_use_time;
 	t_coder			*r_coder;
 	t_coder			*l_coder;
@@ -76,6 +90,7 @@ typedef struct s_dongle
 
 typedef struct s_table
 {
+  pthread_mutex_t get_mutex;
 	pthread_mutex_t	print_mutex;
 	int				number_of_coders;
 	int				time_to_compile;
@@ -84,9 +99,9 @@ typedef struct s_table
 	int				time_to_refactor;
 	int				nbr_compiles_required;
 	int				dongle_cooldown;
-	t_bool			burnout_detected;
-	t_bool			is_simulation_over;
 	long long		start_time;
+	t_bool			burnout_detected;
+	t_bool			simulation_over;
 	t_scheduler		scheduler_type;
 }	t_table;
 
@@ -101,5 +116,7 @@ void		affect_dongle(t_coder *coder, t_side side);
 void		detach_dongle(t_coder *coder, t_side side);
 void		swap_queue(int *queue);
 void		redefine_priority(t_dongle *dongle);
+void  clean_up(t_coder *first_coder);
+long long get_table_attribute(t_table *table, t_attribute attribute);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/08 17:46:04 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/15 00:00:00 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/19 21:41:23 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ static t_bool	parse_arguments(int argc, char **argv, t_table *table)
 	else
 		table->scheduler_type = FIFO;
 	table->burnout_detected = FALSE;
-	table->is_simulation_over = FALSE;
+	table->simulation_over = FALSE;
 	return (TRUE);
 }
 
@@ -96,6 +96,7 @@ static int	create_and_join(t_coder *first_coder, pthread_t *monitor)
 		current_coder = current_coder->nxt_coder;
 		first = FALSE;
 	}
+	pthread_join(*monitor, NULL);
 	return (0);
 }
 
@@ -115,11 +116,10 @@ int	main(int argc, char **argv)
 		return (1);
 	if (create_and_join(first_coder, &monitor))
 		return (1);
-	if (table.is_simulation_over)
-		return (0);
-	if (table.burnout_detected)
-		return (1);
-	pthread_join(monitor, NULL);
-	return (0);
+	if (table.simulation_over || table.burnout_detected)
+  {
+    clean_up(first_coder);
+    return (0);
+  }
+	return (1);
 }
-
