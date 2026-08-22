@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 16:49:43 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/19 18:51:19 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/21 16:11:03 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,5 +118,6 @@ void		swap_queue(int *queue);
 void		redefine_priority(t_dongle *dongle);
 void  clean_up(t_coder *first_coder);
 long long get_table_attribute(t_table *table, t_attribute attribute);
+long long get_last_compile_start(t_coder *coder);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/09 16:15:32 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/20 00:09:46 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/20 22:52:00 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,11 +55,15 @@ long long	get_current_time_ms(void)
 
 t_bool	is_dongle_available(t_dongle *dongle)
 {
+  int     d_cooldown;
+  t_bool  burnout_dt;
+
+  burnout_dt = get_table_attribute(dongle->table, burnout_detected);
+  d_cooldown = get_table_attribute(dongle->table, dongle_cooldown);
 	if (dongle->last_use_time == 0)
 		return (TRUE);
-	while (!get_table_attribute(dongle->table, burnout_detected)
-		&& get_current_time_ms() - dongle->last_use_time
-		< get_table_attribute(dongle->table, dongle_cooldown))
-    usleep(500);
+	while (!burnout_dt && get_current_time_ms() - dongle->last_use_time
+		< d_cooldown)
+    usleep(100);
 	return (TRUE);
 }

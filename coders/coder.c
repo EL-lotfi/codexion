@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/05 14:54:22 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/15 00:00:00 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/20 23:27:20 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,8 @@ static t_coder	*coder_init(int id_coder, t_table *table)
 	coder->r_dongle = dongle;
 	coder->r_dongle->table = table;
 	coder->last_compile_start = get_current_time_ms();
+  if (pthread_mutex_init(&coder->coder_mutex, NULL))
+    return (NULL);
 	return (coder);
 }
 

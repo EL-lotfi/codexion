@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/08 17:46:04 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/19 21:41:23 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/21 17:09:59 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ static t_bool	parse_arguments(int argc, char **argv, t_table *table)
 	if (!parse_positive_int(argv[7], &table->dongle_cooldown))
 		return (FALSE);
 	if (strcmp(argv[8], "FIFO") != 0 && strcmp(argv[8], "fifo") != 0)
-	{
+  {
 		if (strcmp(argv[8], "EDF") != 0 && strcmp(argv[8], "edf") != 0)
 			return (FALSE);
 		table->scheduler_type = EDF;
@@ -109,17 +109,21 @@ int	main(int argc, char **argv)
 	if (!parse_arguments(argc, argv, &table))
 		return (1);
 	table.start_time = get_current_time_ms();
-	if (pthread_mutex_init(&table.print_mutex, NULL) != 0)
+	if (pthread_mutex_init(&table.print_mutex, NULL) || pthread_mutex_init(&table.get_mutex, NULL))
 		return (1);
 	first_coder = create_coders(&table);
 	if (!first_coder)
 		return (1);
 	if (create_and_join(first_coder, &monitor))
-		return (1);
-	if (table.simulation_over || table.burnout_detected)
   {
     clean_up(first_coder);
-    return (0);
+		return (1);
   }
-	return (1);
+	if (table.burnout_detected || table.simulation_over)
+  {
+    clean_up(first_coder);
+		return (1);
+  }
+  clean_up(first_coder);
+	return (0);
 }
