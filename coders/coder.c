@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/05 14:54:22 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/20 23:27:20 by ibel-lot         ###   ########.fr       */
+/*   Created: 2026/08/24 10:27:02 by ibel-lot          #+#    #+#             */
+/*   Updated: 2026/08/24 11:00:40 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ static void	init_dongles(t_coder *coder)
 
 static t_coder	*coder_init(int id_coder, t_table *table)
 {
-	t_coder	*coder;
+	t_coder		*coder;
 	t_dongle	*dongle;
 
 	coder = malloc(sizeof(t_coder));
@@ -82,8 +82,8 @@ static t_coder	*coder_init(int id_coder, t_table *table)
 	coder->r_dongle = dongle;
 	coder->r_dongle->table = table;
 	coder->last_compile_start = get_current_time_ms();
-  if (pthread_mutex_init(&coder->coder_mutex, NULL))
-    return (NULL);
+	if (pthread_mutex_init(&coder->coder_mutex, NULL))
+		return (NULL);
 	return (coder);
 }
 

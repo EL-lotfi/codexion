@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/05 14:54:35 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/22 14:50:29 by ibel-lot         ###   ########.fr       */
+/*   Created: 2026/08/24 10:26:17 by ibel-lot          #+#    #+#             */
+/*   Updated: 2026/08/24 11:18:49 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void	compile_process(t_coder *coder)
 	print_process(coder, COMPILING);
 	compile_start = get_current_time_ms();
 	while (!burnout_dt && get_current_time_ms() - compile_start < tm_to_compile)
-		usleep(100);
+		usleep(200);
 	pthread_mutex_lock(&coder->l_dongle->dongle_mutex);
 	coder->l_dongle->last_use_time = get_current_time_ms();
 	pthread_mutex_unlock(&coder->l_dongle->dongle_mutex);
@@ -63,7 +63,6 @@ void	compile_process(t_coder *coder)
 	pthread_mutex_lock(&coder->coder_mutex);
 	coder->cmp_count += 1;
 	pthread_mutex_unlock(&coder->coder_mutex);
-
 }
 
 void	debug_process(t_coder *coder)
@@ -86,27 +85,25 @@ void	refactor_process(t_coder *coder)
 	long long	refactor_start;
 	long long	tm_refactor;
 	t_bool		burnout_dt;
-	
+
 	tm_refactor = get_table_attribute(coder->table, time_to_refactor);
 	burnout_dt = get_table_attribute(coder->table, burnout_detected);
 	print_process(coder, REFACTORING);
 	refactor_start = get_current_time_ms();
-	while (!burnout_dt && get_current_time_ms() - refactor_start
-		<  tm_refactor)
+	while (!burnout_dt && get_current_time_ms() - refactor_start < tm_refactor)
 		usleep(100);
 	return ;
 }
 
 void	*coder_routine(void *param)
 {
-  int     n_compile_req;
-	t_coder	*coder;
-  t_bool  burnout_dt;
+	int			n_compile_req;
+	t_coder		*coder;
 
 	coder = (t_coder *)param;
-  burnout_dt = get_table_attribute(coder->table, burnout_detected);
-  n_compile_req = get_table_attribute(coder->table, nbr_compiles_required);
-	while (!burnout_dt && coder->cmp_count < n_compile_req)
+	n_compile_req = get_table_attribute(coder->table, nbr_compiles_required);
+	while (!get_table_attribute(coder->table, burnout_detected)
+		&& coder->cmp_count < n_compile_req)
 	{
 		if (coder->id_coder % 2 == 0)
 		{
@@ -122,8 +119,7 @@ void	*coder_routine(void *param)
 		detach_dongle(coder, RIGHT);
 		detach_dongle(coder, LEFT);
 		debug_process(coder);
-    refactor_process(coder);
+		refactor_process(coder);
 	}
-  usleep(100);
 	return (NULL);
 }

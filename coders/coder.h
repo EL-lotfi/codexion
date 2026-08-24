@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/03 16:49:43 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/21 16:11:03 by ibel-lot         ###   ########.fr       */
+/*   Created: 2026/08/24 12:04:18 by ibel-lot          #+#    #+#             */
+/*   Updated: 2026/08/24 12:05:00 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,11 @@ typedef enum e_attribute
 	time_to_debug,
 	time_to_refactor,
 	time_to_burnout,
-  dongle_cooldown,
+	dongle_cooldown,
 	nbr_compiles_required,
-  burnout_detected,
-  start_time,
-  scheduler_type
+	burnout_detected,
+	start_time,
+	scheduler_type
 }	t_attribute;
 
 typedef enum e_process
@@ -63,7 +63,7 @@ typedef enum e_scheduler
 
 typedef struct s_coder
 {
-	pthread_mutex_t		coder_mutex;
+	pthread_mutex_t	coder_mutex;
 	pthread_t		coder_thread;
 	int				id_coder;
 	int				cmp_count;
@@ -90,7 +90,7 @@ typedef struct s_dongle
 
 typedef struct s_table
 {
-  pthread_mutex_t get_mutex;
+	pthread_mutex_t	get_mutex;
 	pthread_mutex_t	print_mutex;
 	int				number_of_coders;
 	int				time_to_compile;
@@ -116,8 +116,9 @@ void		affect_dongle(t_coder *coder, t_side side);
 void		detach_dongle(t_coder *coder, t_side side);
 void		swap_queue(int *queue);
 void		redefine_priority(t_dongle *dongle);
-void  clean_up(t_coder *first_coder);
-long long get_table_attribute(t_table *table, t_attribute attribute);
-long long get_last_compile_start(t_coder *coder);
+void		clean_up(t_coder *first_coder);
+long long	get_table_attribute(t_table *table, t_attribute attribute);
+long long	get_last_compile_start(t_coder *coder);
+t_bool		is_burned_out(t_coder *coder);
 
 #endif
