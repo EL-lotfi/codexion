@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/24 10:26:43 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/24 11:11:04 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/25 13:58:58 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,8 @@ static t_bool	parse_arguments(int argc, char **argv, t_table *table)
 		printf("Usage: %s arguments aren't valid\n", argv[0]);
 		return (FALSE);
 	}
+	if (atoi(argv[1]) == 0)
+		return (FALSE);
 	if (!parse_positive_int(argv[1], &table->number_of_coders))
 		return (FALSE);
 	if (!parse_positive_int(argv[2], &table->time_to_burnout))

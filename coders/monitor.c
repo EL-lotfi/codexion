@@ -6,7 +6,7 @@
 /*   By: ibel-lot <ibel-lot@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/24 11:33:03 by ibel-lot          #+#    #+#             */
-/*   Updated: 2026/08/24 12:06:10 by ibel-lot         ###   ########.fr       */
+/*   Updated: 2026/08/26 19:33:23 by ibel-lot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ void	*monitor_routine(void *param)
 			return (NULL);
 		}
 		current_coder = current_coder->nxt_coder;
-		usleep(100);
+		usleep(1000);
 	}
 	return (NULL);
 }
